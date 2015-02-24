@@ -1,0 +1,66 @@
+<!--
+    @license
+    Copyright (c) 2014 The Yoso Project Authors. All rights reserved.
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Element providing search field with search icon and hint text.
+
+##### Example
+
+    <yoso-searchfield></yoso-searchfield>
+
+@element yoso-searchfield
+@blurb Element providing search field with search icon and hint text.
+@status alpha
+@homepage http://yoso.github.io/yoso-searchfield
+-->
+<polymer-element name="yoso-searchfield">
+
+  <template>
+
+    <link rel="stylesheet" href="yoso-searchfield.css">
+
+    <form action="" class="searchfield">
+      <div class="field">
+        <input type="text" class="input-search" id="input-search" name="input-search" pattern=".{1,}" required value="{{text}}">
+        <label for="input-search">{{hint}}</label>
+      </div>
+    </form>
+  </template>
+
+  <script>
+
+    Polymer({
+      publish: {
+        /**
+         * `text` is a property that contain the search value.
+         *
+         * @property text
+         * @type string
+         * @default
+         */
+        text: {value: '', reflect: true},
+
+        /**
+         * The `hint` attribute sets an initial hint Text
+         *
+         * @attribute hint
+         * @type string
+         * @default 'Search'
+         */
+        hint: {value: 'Search', reflect: true}
+      },
+
+      ready: function() {
+        // Ready is a lifecycle callback.
+        // You can do setup work in here.
+        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+      }
+
+    });
+
+  </script>
+
+</polymer-element>

@@ -1,0 +1,67 @@
+<!--
+    @license
+    Copyright (c) 2014 The Yoso Project Authors. All rights reserved.
+-->
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>Yoso-searchfield Demo</title>
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="yoso-searchfield.html">
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    hr {
+      margin: 3em 0 3em 0;
+      border: none;
+      border-bottom: 1px solid lightgray;
+    }
+
+    pre {
+      background-color: lightyellow;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body unresolved>
+  <h2>Example 1</h2>
+  <p>An example of using <code>&lt;yoso-searchfield></code>:</p>
+  <yoso-searchfield></yoso-searchfield>
+  <p>
+    <strong>Code</strong>
+    <pre><code>
+    &lt;yoso-searchfield>&lt;/yoso-searchfield>
+    </code></pre>
+  </p>
+  <hr>
+
+  <h2>Example 2</h2>
+  <p>An example of using <code>&lt;yoso-searchfield></code> with custom hint text:</p>
+  <yoso-searchfield hint="Suchen"></yoso-searchfield>
+  <p>
+    <strong>Code</strong>
+    <pre><code>
+    &lt;yoso-searchfield hint="Suchen">&lt;/yoso-searchfield>
+    </code></pre>
+  </p>
+  <hr>
+
+  <h3>Example 3</h3>
+  <p>An example of using <code>&lt;yoso-searchfield></code> with preset text value:</p>
+  <yoso-searchfield id="searchfield" text="gefunden"></yoso-searchfield>
+  <p>
+    Test two way binging. <a style="color: dodgerblue; cursor: pointer;" onClick="document.getElementById('prop').innerHTML = document.getElementById('searchfield').text;">Get property</a>: <span id="prop"></span>.
+  </p>
+  <p>
+    <strong>Code</strong>
+    <pre><code>
+    &lt;yoso-searchfield hint="Suchen">&lt;/yoso-searchfield>
+    </code></pre>
+  </p>
+
+</body>
+</html>

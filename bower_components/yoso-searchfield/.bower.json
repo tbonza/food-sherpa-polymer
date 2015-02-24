@@ -1,0 +1,42 @@
+{
+  "name": "yoso-searchfield",
+  "version": "0.1.0",
+  "authors": [
+    "Anonymous jan@nahody.com>"
+  ],
+  "description": "Element providing search field with search icon and hint text.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "yoso",
+    "search",
+    "field"
+  ],
+  "main": [
+    "yoso-searchfield.html",
+    "yoso-searchfield.css"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/nahody/yoso-searchfield/",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^1.6.1"
+  },
+  "_release": "0.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.0",
+    "commit": "a60b46e4697ffda3d14d8323fe068969bac46c83"
+  },
+  "_source": "git://github.com/doroppu/yoso-searchfield.git",
+  "_target": "~0.1.0",
+  "_originalSource": "doroppu/yoso-searchfield",
+  "_direct": true
+}
