@@ -1,6 +1,6 @@
 <!DOCTYPE html><html><head>
 
-  <title>Dirty Dishes :: Boston</title>
+  <title>Boston :: Food Sherpa</title>
 
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
@@ -441,7 +441,7 @@ html /deep/ .paper-shadow-bottom-z-5 {
   need to be notified when they are resized or un-hidden by their parents in order to take
   action on their new measurements).
 
-  Elements that perform measurement should add the `Core.Resizable` mixin to their
+  Elements that perform measurement should add the `Core.Resizable` mixin to their 
   Polymer prototype definition and listen for the `core-resize` event on themselves.
   This event will be fired when they become showing after having been hidden,
   when they are resized explicitly by a `CoreResizer`, or when the window has been resized.
@@ -505,7 +505,7 @@ html /deep/ .paper-shadow-bottom-z-5 {
   action on their new measurements).
 
   Elements that cause their children to be resized (e.g. a splitter control) or hide/show
-  their children (e.g. overlay) should add the `Core.CoreResizer` mixin to their
+  their children (e.g. overlay) should add the `Core.CoreResizer` mixin to their 
   Polymer prototype definition and then call `this.notifyResize()` any time the element
   resizes or un-hides its children.
 
@@ -606,8 +606,8 @@ html /deep/ .paper-shadow-bottom-z-5 {
     // Private: Handle requests for resize
     _handleResizeRequested: function(e) {
       var target = e.path[0];
-      if ((target == this) ||
-          (target == this._resizerListener) ||
+      if ((target == this) || 
+          (target == this._resizerListener) || 
           (this._resizerPeers && this._resizerPeers.indexOf(target) < 0)) {
         return;
       }
@@ -682,14 +682,14 @@ out hidden and is displayed by setting its `opened` property to true.
 A `core-overlay's` opened state can be toggled by calling the `toggle`
 method.
 
-The `core-overlay` will, by default, show/hide itself when it's opened. The
-`target` property may be set to another element to cause that element to
+The `core-overlay` will, by default, show/hide itself when it's opened. The 
+`target` property may be set to another element to cause that element to 
 be shown when the overlay is opened.
 
 It's common to want a `core-overlay` to animate to its opened
 position. The `core-overlay` element uses a `core-transition` to handle
-animation. The default transition is `core-transition-fade` which
-causes the overlay to fade in when displayed. See
+animation. The default transition is `core-transition-fade` which 
+causes the overlay to fade in when displayed. See 
 <a href="../core-transition/">`core-transition`</a> for more
 information about customizing a `core-overlay's` opening animation. The
 `backdrop` property can be set to true to show a backdrop behind the overlay
@@ -711,14 +711,14 @@ presses the escape key. This behavior can be turned off via the
       <button core-overlay-toggle>OK</button>
     </core-overlay>
 
-`core-overlay` will automatically size and position itself according to the
+`core-overlay` will automatically size and position itself according to the 
 following rules. The overlay's size is constrained such that it does not
-overflow the screen. This is done by setting maxHeight/maxWidth on the
+overflow the screen. This is done by setting maxHeight/maxWidth on the 
 `sizingTarget`. If the `sizingTarget` already has a setting for one of these
 properties, it will not be overridden. The overlay should
 be positioned via css or imperatively using the `core-overlay-position` event.
 If the overlay is not positioned vertically via setting `top` or `bottom`, it
-will be centered vertically. The same is true horizontally via a setting to
+will be centered vertically. The same is true horizontally via a setting to 
 `left` or `right`. In addition, css `margin` can be used to provide some space
 around the overlay. This can be used to ensure
 that, for example, a drop shadow is always visible around the overlay.
@@ -848,8 +848,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   display: none;
 }
 
-/*
-mode: scroll
+/* 
+mode: scroll 
 */
 :host([mode=scroll]) #mainContainer {
   overflow: visible;
@@ -924,7 +924,7 @@ mode: cover
     publish: {
       /**
        * Controls header and scrolling behavior. Options are
-       * `standard`, `seamed`, `waterfall`, `waterfall-tall`, `scroll` and
+       * `standard`, `seamed`, `waterfall`, `waterfall-tall`, `scroll` and 
        * `cover`. Default is `standard`.
        *
        * `standard`: The header is a step above the panel. The header will consume the
@@ -996,20 +996,20 @@ mode: cover
       tallMode: {'waterfall-tall': 1},
       outerScroll: {'scroll': 1}
     },
-
+    
     ready: function() {
       this.scrollHandler = this.scroll.bind(this);
       this.addListener();
     },
-
+    
     detached: function() {
       this.removeListener(this.mode);
     },
-
+    
     addListener: function() {
       this.scroller.addEventListener('scroll', this.scrollHandler);
     },
-
+    
     removeListener: function(mode) {
       var s = this.getScrollerForMode(mode);
       s.removeEventListener('scroll', this.scrollHandler);
@@ -1044,7 +1044,7 @@ mode: cover
     get header() {
       return this.$.headerContent.getDistributedNodes()[0];
     },
-
+    
     getScrollerForMode: function(mode) {
       return this.modeConfigs.outerScroll[mode] ?
           this.$.outerContainer : this.$.mainContainer;
@@ -1236,28 +1236,28 @@ mode: cover
 <script>
 
   (function() {
-
+    
     var SKIP_ID = 'meta';
     var metaData = {}, metaArray = {};
 
     Polymer('core-meta', {
-
+      
       /**
        * The type of meta-data.  All meta-data with the same type with be
        * stored together.
-       *
+       * 
        * @attribute type
        * @type string
        * @default 'default'
        */
       type: 'default',
-
+      
       alwaysPrepare: true,
-
+      
       ready: function() {
         this.register(this.id);
       },
-
+      
       get metaArray() {
         var t = this.type;
         if (!metaArray[t]) {
@@ -1265,7 +1265,7 @@ mode: cover
         }
         return metaArray[t];
       },
-
+      
       get metaData() {
         var t = this.type;
         if (!metaData[t]) {
@@ -1273,7 +1273,7 @@ mode: cover
         }
         return metaData[t];
       },
-
+      
       register: function(id, old) {
         if (id && id !== SKIP_ID) {
           this.unregister(this, old);
@@ -1281,7 +1281,7 @@ mode: cover
           this.metaArray.push(this);
         }
       },
-
+      
       unregister: function(meta, id) {
         delete this.metaData[id || meta.id];
         var i = this.metaArray.indexOf(meta);
@@ -1289,10 +1289,10 @@ mode: cover
           this.metaArray.splice(i, 1);
         }
       },
-
+      
       /**
        * Returns a list of all meta-data elements with the same type.
-       *
+       * 
        * @property list
        * @type array
        * @default []
@@ -1300,7 +1300,7 @@ mode: cover
       get list() {
         return this.metaArray;
       },
-
+      
       /**
        * Retrieves meta-data by ID.
        *
@@ -1311,19 +1311,19 @@ mode: cover
       byId: function(id) {
         return this.metaData[id];
       }
-
+      
     });
-
+    
   })();
-
+  
 </script>
 </polymer-element>
 <polymer-element name="core-iconset" extends="core-meta" attributes="src width icons iconSize" assetpath="bower_components/core-iconset/">
-
+  
   <script>
-
+  
     Polymer('core-iconset', {
-
+  
       /**
        * The URL of the iconset image.
        *
@@ -1390,7 +1390,7 @@ mode: cover
         this.iconNames = [];
         this.themes = {};
       },
-
+  
       ready: function() {
         // TODO(sorvell): ensure iconset's src is always relative to the main
         // document
@@ -1441,7 +1441,7 @@ mode: cover
        * @param {String|Number} icon The name of the icon or the index of the
        * icon within in the icon image.
        * @param {String} theme The name of the theme.
-       * @returns {Object} An object specifying the offset of the given icon
+       * @returns {Object} An object specifying the offset of the given icon 
        * within the icon resource file; `offsetX` is the horizontal offset and
        * `offsetY` is the vertical offset. Both values are in pixel units.
        */
@@ -1463,14 +1463,14 @@ mode: cover
 
       /**
        * Applies an icon to the given element as a css background image. This
-       * method does not size the element, and it's often necessary to set
+       * method does not size the element, and it's often necessary to set 
        * the element's height and width so that the background image is visible.
        *
        * @method applyIcon
        * @param {Element} element The element to which the background is
        * applied.
        * @param {String|Number} icon The name or index of the icon to apply.
-       * @param {Number} scale (optional, defaults to 1) A scaling factor
+       * @param {Number} scale (optional, defaults to 1) A scaling factor 
        * with which the icon can be magnified.
        * @return {Element} The icon element.
        */
@@ -1481,7 +1481,7 @@ mode: cover
           var icon = element._icon || document.createElement('div');
           var style = icon.style;
           style.backgroundImage = 'url(' + this.src + ')';
-          style.backgroundPosition = (-offset.offsetX * scale + 'px') +
+          style.backgroundPosition = (-offset.offsetX * scale + 'px') + 
              ' ' + (-offset.offsetY * scale + 'px');
           style.backgroundSize = scale === 1 ? 'auto' :
              this.width * scale + 'px';
@@ -1500,10 +1500,10 @@ mode: cover
 <polymer-element name="core-icon" attributes="src icon alt" assetpath="bower_components/core-icon/">
 <script>
 (function() {
-
+  
   // mono-state
   var meta;
-
+  
   Polymer('core-icon', {
 
     /**
@@ -1532,7 +1532,7 @@ mode: cover
      * If alt is present and not empty, it will set the element's role to img and add an aria-label whose content matches alt.
      * If alt is present and is an empty string, '', it will hide the element from the accessibility layer
      * If alt is not present, it will set the element's role to img and the element will fallback to using the icon attribute for its aria-label.
-     *
+     * 
      * @attribute alt
      * @type string
      * @default ''
@@ -1633,7 +1633,7 @@ mode: cover
     }
 
   });
-
+  
 })();
 </script>
 
@@ -1727,15 +1727,15 @@ mode: cover
         root.insertBefore(svg, root.firstElementChild);
         return svg;
       },
-
+      
       /**
        * Tell users of the iconset, that the set has loaded.
-       * This finds all elements matching the selector argument and calls
+       * This finds all elements matching the selector argument and calls 
        * the method argument on them.
        * @method updateIcons
-       * @param selector {string} css selector to identify iconset users,
+       * @param selector {string} css selector to identify iconset users, 
        * defaults to '[icon]'
-       * @param method {string} method to call on found elements,
+       * @param method {string} method to call on found elements, 
        * defaults to 'updateIcon'
        */
       updateIcons: function(selector, method) {
@@ -1749,7 +1749,7 @@ mode: cover
           }
         }
       }
-
+      
 
     });
 
@@ -2025,7 +2025,7 @@ Polymer('core-style', {
 
   publish: {
     /**
-     * The `ref` property should be set if the `core-style` element is a
+     * The `ref` property should be set if the `core-style` element is a 
      * consumer of styles. Set it to the `id` of the desired `core-style`
      * element.
      *
@@ -2041,7 +2041,7 @@ Polymer('core-style', {
   refMap: CoreStyle.refMap,
 
   /**
-   * The `list` is a map of all `core-style` producers stored by `id`. It
+   * The `list` is a map of all `core-style` producers stored by `id`. It 
    * should be considered readonly. It's useful for nesting one `core-style`
    * inside another.
    *
@@ -2060,7 +2060,7 @@ Polymer('core-style', {
       this.registerRef(this.ref);
       if (!window.ShadowDOMPolyfill) {
         this.require();
-      }
+      }  
     }
   },
 
@@ -2092,7 +2092,7 @@ Polymer('core-style', {
       }
       this.list[this.id].push(this);
     } else {
-      this.list[this.id] = this;
+      this.list[this.id] = this;  
     }
   },
 
@@ -2100,7 +2100,7 @@ Polymer('core-style', {
   _completeProvide: function() {
     this.createShadowRoot();
     this.domObserver = new MutationObserver(this.domModified.bind(this))
-        .observe(this.shadowRoot, {subtree: true,
+        .observe(this.shadowRoot, {subtree: true, 
         characterData: true, childList: true});
     this.provideContent();
   },
@@ -2201,7 +2201,7 @@ Polymer('core-style', {
 
   ensureStyleElement: function() {
     if (!this.styleElement) {
-      this.styleElement = window.ShadowDOMPolyfill ?
+      this.styleElement = window.ShadowDOMPolyfill ? 
           this.makeShimStyle() :
           this.makeRootStyle();
     }
@@ -2236,7 +2236,7 @@ Polymer('core-style', {
       if (host) {
         var typeExtension = host.hasAttribute('is');
         var name = typeExtension ? host.getAttribute('is') : host.localName;
-        selector = WebComponents.ShadowCSS.makeScopeSelector(name,
+        selector = WebComponents.ShadowCSS.makeScopeSelector(name, 
             typeExtension);
       }
       this._scopeSelector = selector;
@@ -2268,7 +2268,7 @@ Polymer('core-style', {
     }
 
     return rgb.replace(/rgb\(([^,]*),([^,]*),([^,]*)\)/, function(m, a, b, c) {
-      return 'rgb(' + cycleChannel(a) + ',' + cycleChannel(b) + ', '
+      return 'rgb(' + cycleChannel(a) + ',' + cycleChannel(b) + ', ' 
           + cycleChannel(c) + ')';
     });
   },
@@ -2985,10 +2985,10 @@ polyfill-next-selector {
 </polymer-element>
 
 <polymer-element name="core-transition" extends="core-meta" assetpath="bower_components/core-transition/">
-
+  
   <script>
     Polymer('core-transition', {
-
+      
       type: 'transition',
 
       /**
@@ -3128,7 +3128,7 @@ polyfill-next-selector {
         this.cacheDomLocation(n);
         this.updateEventController(n);
         insertionPoint.__contents.push(n);
-        parent.appendChild(n);
+        parent.appendChild(n);  
       }
     },
     updateEventController: function(element) {
@@ -3153,7 +3153,7 @@ polyfill-next-selector {
         element.__contents = null;
       }
       if (element.__parentNode) {
-        var n = element.__nextElementSibling && element.__nextElementSibling
+        var n = element.__nextElementSibling && element.__nextElementSibling 
             === element.__parentNode ? element.__nextElementSibling : null;
         element.__parentNode.insertBefore(element, n);
       }
@@ -3163,7 +3163,7 @@ polyfill-next-selector {
       element.__parentNode = element.parentNode;
     }
   });
-
+  
 })();
 </script>
 </polymer-element>
@@ -3175,7 +3175,7 @@ polyfill-next-selector {
 
     publish: {
       /**
-       * The target element that will be shown when the overlay is
+       * The target element that will be shown when the overlay is 
        * opened. If unspecified, the core-overlay itself is the target.
        *
        * @attribute target
@@ -3186,11 +3186,11 @@ polyfill-next-selector {
 
 
       /**
-       * A `core-overlay`'s size is guaranteed to be
+       * A `core-overlay`'s size is guaranteed to be 
        * constrained to the window size. To achieve this, the sizingElement
-       * is sized with a max-height/width. By default this element is the
+       * is sized with a max-height/width. By default this element is the 
        * target element, but it can be specifically set to a specific element
-       * inside the target if that is more appropriate. This is useful, for
+       * inside the target if that is more appropriate. This is useful, for 
        * example, when a region inside the overlay should scroll if needed.
        *
        * @attribute sizingTarget
@@ -3198,7 +3198,7 @@ polyfill-next-selector {
        * @default the target element
        */
       sizingTarget: null,
-
+    
       /**
        * Set opened to true to show an overlay and to false to hide it.
        * A `core-overlay` may be made initially opened by setting its
@@ -3218,7 +3218,7 @@ polyfill-next-selector {
        * @attribute backdrop
        * @type boolean
        * @default false
-       */
+       */    
       backdrop: false,
 
       /**
@@ -3229,7 +3229,7 @@ polyfill-next-selector {
        * @default false
       */
       layered: false,
-
+    
       /**
        * By default an overlay will close automatically if the user
        * taps outside it or presses the escape key. Disable this
@@ -3273,8 +3273,8 @@ polyfill-next-selector {
       closeSelector: '',
 
       /**
-       * The transition property specifies a string which identifies a
-       * <a href="../core-transition/">`core-transition`</a> element that
+       * The transition property specifies a string which identifies a 
+       * <a href="../core-transition/">`core-transition`</a> element that 
        * will be used to help the overlay open and close. The default
        * `core-transition-fade` will cause the overlay to fade in and out.
        *
@@ -3319,7 +3319,7 @@ polyfill-next-selector {
       Polymer.flush();
     },
 
-    /**
+    /** 
      * Toggle the opened state of the overlay.
      * @method toggle
      */
@@ -3327,7 +3327,7 @@ polyfill-next-selector {
       this.opened = !this.opened;
     },
 
-    /**
+    /** 
      * Open the overlay. This is equivalent to setting the `opened`
      * property to true.
      * @method open
@@ -3336,8 +3336,8 @@ polyfill-next-selector {
       this.opened = true;
     },
 
-    /**
-     * Close the overlay. This is equivalent to setting the `opened`
+    /** 
+     * Close the overlay. This is equivalent to setting the `opened` 
      * property to false.
      * @method close
      */
@@ -3484,7 +3484,7 @@ polyfill-next-selector {
           this.layer.removeElement(this.target);
         }
       }
-      this.fire('core-overlay-' + (this.opened ? 'open' : 'close') +
+      this.fire('core-overlay-' + (this.opened ? 'open' : 'close') + 
           '-completed');
       this.applyFocus();
     },
@@ -3613,7 +3613,7 @@ polyfill-next-selector {
       var flip = (positionedBy === end);
       var m = flip ? start : end;
       var ws = window['inner' + extent];
-      var o = dims.margin[m] + (flip ? ws - rect[end] :
+      var o = dims.margin[m] + (flip ? ws - rect[end] : 
           rect[start]);
       var offset = 'offset' + extent;
       var o2 = this.target[offset] - this.sizingTarget[offset];
@@ -3622,9 +3622,9 @@ polyfill-next-selector {
 
     // vertically and horizontally center if not positioned
     repositionTarget: function() {
-      // only center if position fixed.
+      // only center if position fixed.      
       if (this.dimensions.position.css !== 'fixed') {
-        return;
+        return; 
       }
       if (!this.dimensions.position.v) {
         var t = (window.innerHeight - this.target.offsetHeight) / 2;
@@ -3641,11 +3641,11 @@ polyfill-next-selector {
 
     resetTargetDimensions: function() {
       if (!this.dimensions || !this.dimensions.size.v) {
-        this.sizingTarget.style.maxHeight = '';
+        this.sizingTarget.style.maxHeight = '';  
         this.target.style.top = '';
       }
       if (!this.dimensions || !this.dimensions.size.h) {
-        this.sizingTarget.style.maxWidth = '';
+        this.sizingTarget.style.maxWidth = '';  
         this.target.style.left = '';
       }
       this.dimensions = null;
@@ -3664,9 +3664,9 @@ polyfill-next-selector {
         }
       }
     },
-
+    
     // We use the traditional approach of capturing events on document
-    // to to determine if the overlay needs to close. However, due to
+    // to to determine if the overlay needs to close. However, due to 
     // ShadowDOM event retargeting, the event target is not useful. Instead
     // of using it, we attempt to close asynchronously and prevent the close
     // if a tap event is immediately heard on the target.
@@ -3689,7 +3689,7 @@ polyfill-next-selector {
 
     /**
      * Extensions of core-overlay should implement the `resizeHandler`
-     * method to adjust the size and position of the overlay when the
+     * method to adjust the size and position of the overlay when the 
      * browser window resizes.
      * @method resizeHandler
      */
@@ -3768,11 +3768,11 @@ polyfill-next-selector {
       setZ(overlay, '');
     }
   }
-
+  
   function applyOverlayZ(overlay, aboveZ) {
     setZ(overlay.target, aboveZ + 2);
   }
-
+  
   function setZ(element, z) {
     element.style.zIndex = z;
   }
@@ -3780,9 +3780,9 @@ polyfill-next-selector {
   function currentOverlay() {
     return overlays[overlays.length-1];
   }
-
+  
   var DEFAULT_Z = 10;
-
+  
   function currentOverlayZ() {
     var z;
     var current = currentOverlay();
@@ -3794,7 +3794,7 @@ polyfill-next-selector {
     }
     return z || DEFAULT_Z;
   }
-
+  
   function focusOverlay() {
     var current = currentOverlay();
     // We have to be careful to focus the next overlay _after_ any current
@@ -4113,7 +4113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
 
   Polymer('core-range', {
-
+    
     /**
      * The number that represents the current value.
      *
@@ -4122,7 +4122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @default 0
      */
     value: 0,
-
+    
     /**
      * The number that indicates the minimum value of the range.
      *
@@ -4131,7 +4131,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @default 0
      */
     min: 0,
-
+    
     /**
      * The number that indicates the maximum value of the range.
      *
@@ -4140,7 +4140,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @default 100
      */
     max: 100,
-
+    
     /**
      * Specifies the value granularity of the range's value.
      *
@@ -4149,7 +4149,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @default 1
      */
     step: 1,
-
+    
     /**
      * Returns the ratio of the value.
      *
@@ -4158,42 +4158,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @default 0
      */
     ratio: 0,
-
+    
     observe: {
       'value min max step': 'update'
     },
-
+    
     calcRatio: function(value) {
       return (this.clampValue(value) - this.min) / (this.max - this.min);
     },
-
+    
     clampValue: function(value) {
       return Math.min(this.max, Math.max(this.min, this.calcStep(value)));
     },
-
+    
     calcStep: function(value) {
       return this.step ? (Math.round(value / this.step) / (1 / this.step)) : value;
     },
-
+    
     validateValue: function() {
       var v = this.clampValue(this.value);
       this.value = this.oldValue = isNaN(v) ? this.oldValue : v;
       return this.value !== v;
     },
-
+    
     update: function() {
       this.validateValue();
       this.ratio = this.calcRatio(this.value) * 100;
     }
-
+    
   });
-
+  
 </script>
 </polymer-element>
 <polymer-element name="paper-progress" extends="core-range" attributes="secondaryProgress indeterminate" assetpath="bower_components/paper-progress/">
 
   <template>
-
+  
     <style>/*
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -4263,20 +4263,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }
 }
 </style>
-
+  
     <div id="progressContainer" role="progressbar" aria-valuenow="{{value}}" aria-valuemin="{{min}}" aria-valuemax="{{max}}">
-
+    
       <div id="secondaryProgress" fit=""></div>
       <div id="activeProgress" fit=""></div>
-
+      
     </div>
-
+    
   </template>
-
+  
   <script>
-
+  
     Polymer('paper-progress', {
-
+      
       /**
        * The number that represents the current secondary progress.
        *
@@ -4285,7 +4285,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @default 0
        */
       secondaryProgress: 0,
-
+      
       /**
        * Use an indeterminate progress indicator.
        *
@@ -4296,11 +4296,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       indeterminate: false,
 
       step: 0,
-
+      
       observe: {
         'value secondaryProgress min max indeterminate': 'update'
       },
-
+      
       update: function() {
         this.super();
         this.secondaryProgress = this.clampValue(this.secondaryProgress);
@@ -4323,11 +4323,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       secondaryRatioChanged: function() {
         this.transformProgress(this.$.secondaryProgress, this.secondaryRatio);
       }
-
+      
     });
-
+    
   </script>
-
+  
 </polymer-element>
 
 <polymer-element name="core-xhr" hidden="" assetpath="bower_components/core-ajax/">
@@ -4379,7 +4379,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         return xhr;
       },
-
+    
       toQueryString: function(params) {
         var r = [];
         for (var n in params) {
@@ -4393,7 +4393,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       isBodyMethod: function(method) {
         return this.bodyMethods[(method || '').toUpperCase()];
       },
-
+      
       bodyMethods: {
         POST: 1,
         PUT: 1,
@@ -4420,7 +4420,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
   </script>
-
+  
 </polymer-element>
 <polymer-element name="core-ajax" hidden="" attributes="url handleAs auto params response error method headers body contentType withCredentials progress loading" assetpath="bower_components/core-ajax/">
 <script>
@@ -4766,11 +4766,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var hasContentType = Object.keys(args.headers).some(function (header) {
         return header.toLowerCase() === 'content-type';
       });
-      // No Content-Type should be specified if sending `FormData`.
+      // No Content-Type should be specified if sending `FormData`.  
       // The UA must set the Content-Type w/ a calculated  multipart boundary ID.
       if (args.body instanceof FormData) {
         delete args.headers['Content-Type'];
-      }
+      } 
       else if (!hasContentType && this.contentType) {
         args.headers['Content-Type'] = this.contentType;
       }
@@ -4860,6 +4860,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .background-fill {
         background-color: #eee;
       }
+
       .core-header {
         height: 60px;
         line-height: 60px;
@@ -4887,10 +4888,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 10px;
       }
 
-      .input {
-        padding: 10px;
-      }
-
       .info { padding: 10px; }
       h4, .info > div { margin: 0 0 10px; }
     </style>
@@ -4899,7 +4896,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </core-media-query>
 
     <core-header-panel id="core_header_panel">
+      <!--
+        Upon experimentation, "indeterminate" tested better than an
+        actual progress based -->
       <paper-progress id="progress" bottom="" fit="" indeterminate=""></paper-progress>
+
       <!--<paper-progress id="progress"-->
       <!--  bottom fit-->
       <!--  min="0"-->
@@ -4907,7 +4908,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!--  max="{{progress.lengthComputable}}">-->
       <!--</paper-progress>-->
       <div class="core-header">
-        Dirty Dishes :: Boston
+        Boston :: Food Sherpa
       </div>
 
       <div class="content">
