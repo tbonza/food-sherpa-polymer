@@ -1,13 +1,18 @@
+<!--
+  Food Sherpa (Annotated Polymer Example)
+  ---------------------------------------
+
+  Everything is kept in this single file intentionally. Likely, if I were to
+  harden this further, I would break out each restaurant card into its own
+  element, and possibly extend core-ajax to API-specific details like paging.
+-->
+
 <link rel="import" href="../../bower_components/core-header-panel/core-header-panel.html">
 <link rel="import" href="../../bower_components/core-media-query/core-media-query.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
-<link rel="import" href="../../bower_components/yoso-searchfield/yoso-searchfield.html">
-<link rel="import" href="../dd-search/dd-search.html">
-<link rel="import" href="../dd-results/dd-results.html">
-<link rel="import" href="../dd-data/dd-data.html">
 
 <polymer-element name="dd-app">
   <template>
@@ -47,6 +52,7 @@
       .background-fill {
         background-color: #eee;
       }
+
       .core-header {
         height: 60px;
         line-height: 60px;
@@ -74,10 +80,6 @@
         margin-bottom: 10px;
       }
 
-      .input {
-        padding: 10px;
-      }
-
       .info { padding: 10px; }
       h4, .info > div { margin: 0 0 10px; }
     </style>
@@ -88,7 +90,11 @@
     </core-media-query>
 
     <core-header-panel id="core_header_panel">
+      <!--
+        Upon experimentation, "indeterminate" tested better than an
+        actual progress based -->
       <paper-progress id="progress" bottom fit indeterminate></paper-progress>
+
       <!--<paper-progress id="progress"-->
       <!--  bottom fit-->
       <!--  min="0"-->
@@ -96,7 +102,7 @@
       <!--  max="{{progress.lengthComputable}}">-->
       <!--</paper-progress>-->
       <div class="core-header">
-        Dirty Dishes :: Boston
+        Boston :: Food Sherpa
       </div>
 
       <div class="content">
