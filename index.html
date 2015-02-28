@@ -322,6 +322,10 @@ html /deep/ [segment], html /deep/ segment {
 
 
 
+
+
+
+
 <style shim-shadowdom="">
   /* FIXME consider theming */
 
@@ -816,14 +820,503 @@ object like this: `{v: 'top', h: 'right'}`.
 
 
 
-
-
-
-
   <link rel="stylesheet" href="css/app.css">
 </head>
 
 <body fullbleed="" vertical="" layout="" unresolved=""><div hidden="">
+<polymer-element name="core-xhr" hidden="" assetpath="bower_components/core-ajax/">
+
+  <script>
+
+    Polymer('core-xhr', {
+
+      /**
+       * Sends a HTTP request to the server and returns the XHR object.
+       *
+       * @method request
+       * @param {Object} inOptions
+       *    @param {String} inOptions.url The url to which the request is sent.
+       *    @param {String} inOptions.method The HTTP method to use, default is GET.
+       *    @param {boolean} inOptions.sync By default, all requests are sent asynchronously. To send synchronous requests, set to true.
+       *    @param {Object} inOptions.params Data to be sent to the server.
+       *    @param {Object} inOptions.body The content for the request body for POST method.
+       *    @param {Object} inOptions.headers HTTP request headers.
+       *    @param {String} inOptions.responseType The response type. Default is 'text'.
+       *    @param {boolean} inOptions.withCredentials Whether or not to send credentials on the request. Default is false.
+       *    @param {Object} inOptions.callback Called when request is completed.
+       * @returns {Object} XHR object.
+       */
+      request: function(options) {
+        var xhr = new XMLHttpRequest();
+        var url = options.url;
+        var method = options.method || 'GET';
+        var async = !options.sync;
+        //
+        var params = this.toQueryString(options.params);
+        if (params && method.toUpperCase() == 'GET') {
+          url += (url.indexOf('?') > 0 ? '&' : '?') + params;
+        }
+        var xhrParams = this.isBodyMethod(method) ? (options.body || params) : null;
+        //
+        xhr.open(method, url, async);
+        if (options.responseType) {
+          xhr.responseType = options.responseType;
+        }
+        if (options.withCredentials) {
+          xhr.withCredentials = true;
+        }
+        this.makeReadyStateHandler(xhr, options.callback);
+        this.setRequestHeaders(xhr, options.headers);
+        xhr.send(xhrParams);
+        if (!async) {
+          xhr.onreadystatechange(xhr);
+        }
+        return xhr;
+      },
+    
+      toQueryString: function(params) {
+        var r = [];
+        for (var n in params) {
+          var v = params[n];
+          n = encodeURIComponent(n);
+          r.push(v == null ? n : (n + '=' + encodeURIComponent(v)));
+        }
+        return r.join('&');
+      },
+
+      isBodyMethod: function(method) {
+        return this.bodyMethods[(method || '').toUpperCase()];
+      },
+      
+      bodyMethods: {
+        POST: 1,
+        PUT: 1,
+        PATCH: 1,
+        DELETE: 1
+      },
+
+      makeReadyStateHandler: function(xhr, callback) {
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4) {
+            callback && callback.call(null, xhr.response, xhr);
+          }
+        };
+      },
+
+      setRequestHeaders: function(xhr, headers) {
+        if (headers) {
+          for (var name in headers) {
+            xhr.setRequestHeader(name, headers[name]);
+          }
+        }
+      }
+
+    });
+
+  </script>
+  
+</polymer-element>
+<polymer-element name="core-ajax" hidden="" attributes="url handleAs auto params response error method headers body contentType withCredentials progress loading" assetpath="bower_components/core-ajax/">
+<script>
+
+  Polymer('core-ajax', {
+    /**
+     * Fired when a response is received.
+     *
+     * @event core-response
+     */
+
+    /**
+     * Fired when an error is received.
+     *
+     * @event core-error
+     */
+
+    /**
+     * Fired whenever a response or an error is received.
+     *
+     * @event core-complete
+     */
+
+    /**
+     * The URL target of the request.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    /**
+     * Specifies what data to store in the `response` property, and
+     * to deliver as `event.response` in `response` events.
+     *
+     * One of:
+     *
+     *    `text`: uses `XHR.responseText`.
+     *
+     *    `xml`: uses `XHR.responseXML`.
+     *
+     *    `json`: uses `XHR.responseText` parsed as JSON.
+     *
+     *    `arraybuffer`: uses `XHR.response`.
+     *
+     *    `blob`: uses `XHR.response`.
+     *
+     *    `document`: uses `XHR.response`.
+     *
+     * @attribute handleAs
+     * @type string
+     * @default 'text'
+     */
+    handleAs: '',
+
+    /**
+     * If true, automatically performs an Ajax request when either `url` or `params` changes.
+     *
+     * @attribute auto
+     * @type boolean
+     * @default false
+     */
+    auto: false,
+
+    /**
+     * Parameters to send to the specified URL, as JSON.
+     *
+     * @attribute params
+     * @type string
+     * @default ''
+     */
+    params: '',
+
+    /**
+     * The response for the current request, or null if it hasn't
+     * completed yet or the request resulted in error.
+     *
+     * @attribute response
+     * @type Object
+     * @default null
+     */
+    response: null,
+
+    /**
+     * The error for the current request, or null if it hasn't
+     * completed yet or the request resulted in success.
+     *
+     * @attribute error
+     * @type Object
+     * @default null
+     */
+    error: null,
+
+    /**
+     * Whether the current request is currently loading.
+     *
+     * @attribute loading
+     * @type boolean
+     * @default false
+     */
+    loading: false,
+
+    /**
+     * The progress of the current request.
+     *
+     * @attribute progress
+     * @type {loaded: number, total: number, lengthComputable: boolean}
+     * @default {}
+     */
+    progress: null,
+
+    /**
+     * The HTTP method to use such as 'GET', 'POST', 'PUT', or 'DELETE'.
+     * Default is 'GET'.
+     *
+     * @attribute method
+     * @type string
+     * @default ''
+     */
+    method: '',
+
+    /**
+     * HTTP request headers to send.
+     *
+     * Example:
+     *
+     *     <core-ajax
+     *         auto
+     *         url="http://somesite.com"
+     *         headers='{"X-Requested-With": "XMLHttpRequest"}'
+     *         handleAs="json"
+     *         on-core-response="{{handleResponse}}"></core-ajax>
+     *
+     * @attribute headers
+     * @type Object
+     * @default null
+     */
+    headers: null,
+
+    /**
+     * Optional raw body content to send when method === "POST".
+     *
+     * Example:
+     *
+     *     <core-ajax method="POST" auto url="http://somesite.com"
+     *         body='{"foo":1, "bar":2}'>
+     *     </core-ajax>
+     *
+     * @attribute body
+     * @type Object
+     * @default null
+     */
+    body: null,
+
+    /**
+     * Content type to use when sending data.
+     *
+     * @attribute contentType
+     * @type string
+     * @default 'application/x-www-form-urlencoded'
+     */
+    contentType: 'application/x-www-form-urlencoded',
+
+    /**
+     * Set the withCredentials flag on the request.
+     *
+     * @attribute withCredentials
+     * @type boolean
+     * @default false
+     */
+    withCredentials: false,
+
+    /**
+     * Additional properties to send to core-xhr.
+     *
+     * Can be set to an object containing default properties
+     * to send as arguments to the `core-xhr.request()` method
+     * which implements the low-level communication.
+     *
+     * @property xhrArgs
+     * @type Object
+     * @default null
+     */
+    xhrArgs: null,
+
+    created: function() {
+      this.progress = {};
+    },
+
+    ready: function() {
+      this.xhr = document.createElement('core-xhr');
+    },
+
+    receive: function(response, xhr) {
+      if (this.isSuccess(xhr)) {
+        this.processResponse(xhr);
+      } else {
+        this.processError(xhr);
+      }
+      this.complete(xhr);
+    },
+
+    isSuccess: function(xhr) {
+      var status = xhr.status || 0;
+      return (status >= 200 && status < 300);
+    },
+
+    processResponse: function(xhr) {
+      var response = this.evalResponse(xhr);
+      if (xhr === this.activeRequest) {
+        this.response = response;
+      }
+      this.fire('core-response', {response: response, xhr: xhr});
+    },
+
+    processError: function(xhr) {
+      var response = this.evalResponse(xhr);
+      var error = {
+        statusCode: xhr.status,
+        response: response
+      };
+      if (xhr === this.activeRequest) {
+        this.error = error;
+      }
+      this.fire('core-error', {response: error, xhr: xhr});
+    },
+
+    processProgress: function(progress, xhr) {
+      if (xhr !== this.activeRequest) {
+        return;
+      }
+      // We create a proxy object here because these fields
+      // on the progress event are readonly properties, which
+      // causes problems in common use cases (e.g. binding to
+      // <paper-progress> attributes).
+      var progressProxy = {
+        lengthComputable: progress.lengthComputable,
+        loaded: progress.loaded,
+        total: progress.total
+      }
+      this.progress = progressProxy;
+    },
+
+    complete: function(xhr) {
+      if (xhr === this.activeRequest) {
+        this.loading = false;
+      }
+      this.fire('core-complete', {response: xhr.status, xhr: xhr});
+    },
+
+    evalResponse: function(xhr) {
+      return this[(this.handleAs || 'text') + 'Handler'](xhr);
+    },
+
+    xmlHandler: function(xhr) {
+      return xhr.responseXML;
+    },
+
+    textHandler: function(xhr) {
+      return xhr.responseText;
+    },
+
+    jsonHandler: function(xhr) {
+      var r = xhr.responseText;
+      try {
+        return JSON.parse(r);
+      } catch (x) {
+        console.warn('core-ajax caught an exception trying to parse response as JSON:');
+        console.warn('url:', this.url);
+        console.warn(x);
+        return r;
+      }
+    },
+
+    documentHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    blobHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    arraybufferHandler: function(xhr) {
+      return xhr.response;
+    },
+
+    urlChanged: function() {
+      if (!this.handleAs) {
+        var ext = String(this.url).split('.').pop();
+        switch (ext) {
+          case 'json':
+            this.handleAs = 'json';
+            break;
+        }
+      }
+      this.autoGo();
+    },
+
+    paramsChanged: function() {
+      this.autoGo();
+    },
+
+    bodyChanged: function() {
+      this.autoGo();
+    },
+
+    autoChanged: function() {
+      this.autoGo();
+    },
+
+    // TODO(sorvell): multiple side-effects could call autoGo
+    // during one micro-task, use a job to have only one action
+    // occur
+    autoGo: function() {
+      if (this.auto) {
+        this.goJob = this.job(this.goJob, this.go, 0);
+      }
+    },
+
+    getParams: function(params) {
+      params = this.params || params;
+      if (params && typeof(params) == 'string') {
+        params = JSON.parse(params);
+      }
+      return params;
+    },
+
+    /**
+     * Performs an Ajax request to the specified URL.
+     *
+     * @method go
+     */
+    go: function() {
+      var args = this.xhrArgs || {};
+      // TODO(sjmiles): we may want XHR to default to POST if body is set
+      args.body = this.body || args.body;
+      args.params = this.getParams(args.params);
+      args.headers = this.headers || args.headers || {};
+      if (args.headers && typeof(args.headers) == 'string') {
+        args.headers = JSON.parse(args.headers);
+      }
+      var hasContentType = Object.keys(args.headers).some(function (header) {
+        return header.toLowerCase() === 'content-type';
+      });
+      // No Content-Type should be specified if sending `FormData`.  
+      // The UA must set the Content-Type w/ a calculated  multipart boundary ID.
+      if (args.body instanceof FormData) {
+        delete args.headers['Content-Type'];
+      } 
+      else if (!hasContentType && this.contentType) {
+        args.headers['Content-Type'] = this.contentType;
+      }
+      if (this.handleAs === 'arraybuffer' || this.handleAs === 'blob' ||
+          this.handleAs === 'document') {
+        args.responseType = this.handleAs;
+      }
+      args.withCredentials = this.withCredentials;
+      args.callback = this.receive.bind(this);
+      args.url = this.url;
+      args.method = this.method;
+
+      this.response = this.error = this.progress = null;
+      this.activeRequest = args.url && this.xhr.request(args);
+      if (this.activeRequest) {
+        this.loading = true;
+        var activeRequest = this.activeRequest;
+        // IE < 10 doesn't support progress events.
+        if ('onprogress' in activeRequest) {
+          this.activeRequest.addEventListener(
+              'progress',
+              function(progress) {
+                this.processProgress(progress, activeRequest);
+              }.bind(this), false);
+        } else {
+          this.progress = {
+            lengthComputable: false,
+          }
+        }
+      }
+      return this.activeRequest;
+    },
+
+    /**
+     * Aborts the current active request if there is one and resets internal
+     * state appropriately.
+     *
+     * @method abort
+     */
+    abort: function() {
+      if (!this.activeRequest) return;
+      this.activeRequest.abort();
+      this.activeRequest = null;
+      this.progress = {};
+      this.loading = false;
+    }
+
+  });
+
+</script>
+</polymer-element>
+
 <polymer-element name="core-header-panel" assetpath="bower_components/core-header-panel/">
 <template>
 
@@ -4354,500 +4847,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </script>
   
 </polymer-element>
-
-<polymer-element name="core-xhr" hidden="" assetpath="bower_components/core-ajax/">
-
-  <script>
-
-    Polymer('core-xhr', {
-
-      /**
-       * Sends a HTTP request to the server and returns the XHR object.
-       *
-       * @method request
-       * @param {Object} inOptions
-       *    @param {String} inOptions.url The url to which the request is sent.
-       *    @param {String} inOptions.method The HTTP method to use, default is GET.
-       *    @param {boolean} inOptions.sync By default, all requests are sent asynchronously. To send synchronous requests, set to true.
-       *    @param {Object} inOptions.params Data to be sent to the server.
-       *    @param {Object} inOptions.body The content for the request body for POST method.
-       *    @param {Object} inOptions.headers HTTP request headers.
-       *    @param {String} inOptions.responseType The response type. Default is 'text'.
-       *    @param {boolean} inOptions.withCredentials Whether or not to send credentials on the request. Default is false.
-       *    @param {Object} inOptions.callback Called when request is completed.
-       * @returns {Object} XHR object.
-       */
-      request: function(options) {
-        var xhr = new XMLHttpRequest();
-        var url = options.url;
-        var method = options.method || 'GET';
-        var async = !options.sync;
-        //
-        var params = this.toQueryString(options.params);
-        if (params && method.toUpperCase() == 'GET') {
-          url += (url.indexOf('?') > 0 ? '&' : '?') + params;
-        }
-        var xhrParams = this.isBodyMethod(method) ? (options.body || params) : null;
-        //
-        xhr.open(method, url, async);
-        if (options.responseType) {
-          xhr.responseType = options.responseType;
-        }
-        if (options.withCredentials) {
-          xhr.withCredentials = true;
-        }
-        this.makeReadyStateHandler(xhr, options.callback);
-        this.setRequestHeaders(xhr, options.headers);
-        xhr.send(xhrParams);
-        if (!async) {
-          xhr.onreadystatechange(xhr);
-        }
-        return xhr;
-      },
-    
-      toQueryString: function(params) {
-        var r = [];
-        for (var n in params) {
-          var v = params[n];
-          n = encodeURIComponent(n);
-          r.push(v == null ? n : (n + '=' + encodeURIComponent(v)));
-        }
-        return r.join('&');
-      },
-
-      isBodyMethod: function(method) {
-        return this.bodyMethods[(method || '').toUpperCase()];
-      },
-      
-      bodyMethods: {
-        POST: 1,
-        PUT: 1,
-        PATCH: 1,
-        DELETE: 1
-      },
-
-      makeReadyStateHandler: function(xhr, callback) {
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4) {
-            callback && callback.call(null, xhr.response, xhr);
-          }
-        };
-      },
-
-      setRequestHeaders: function(xhr, headers) {
-        if (headers) {
-          for (var name in headers) {
-            xhr.setRequestHeader(name, headers[name]);
-          }
-        }
-      }
-
-    });
-
-  </script>
-  
-</polymer-element>
-<polymer-element name="core-ajax" hidden="" attributes="url handleAs auto params response error method headers body contentType withCredentials progress loading" assetpath="bower_components/core-ajax/">
-<script>
-
-  Polymer('core-ajax', {
-    /**
-     * Fired when a response is received.
-     *
-     * @event core-response
-     */
-
-    /**
-     * Fired when an error is received.
-     *
-     * @event core-error
-     */
-
-    /**
-     * Fired whenever a response or an error is received.
-     *
-     * @event core-complete
-     */
-
-    /**
-     * The URL target of the request.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
-    url: '',
-
-    /**
-     * Specifies what data to store in the `response` property, and
-     * to deliver as `event.response` in `response` events.
-     *
-     * One of:
-     *
-     *    `text`: uses `XHR.responseText`.
-     *
-     *    `xml`: uses `XHR.responseXML`.
-     *
-     *    `json`: uses `XHR.responseText` parsed as JSON.
-     *
-     *    `arraybuffer`: uses `XHR.response`.
-     *
-     *    `blob`: uses `XHR.response`.
-     *
-     *    `document`: uses `XHR.response`.
-     *
-     * @attribute handleAs
-     * @type string
-     * @default 'text'
-     */
-    handleAs: '',
-
-    /**
-     * If true, automatically performs an Ajax request when either `url` or `params` changes.
-     *
-     * @attribute auto
-     * @type boolean
-     * @default false
-     */
-    auto: false,
-
-    /**
-     * Parameters to send to the specified URL, as JSON.
-     *
-     * @attribute params
-     * @type string
-     * @default ''
-     */
-    params: '',
-
-    /**
-     * The response for the current request, or null if it hasn't
-     * completed yet or the request resulted in error.
-     *
-     * @attribute response
-     * @type Object
-     * @default null
-     */
-    response: null,
-
-    /**
-     * The error for the current request, or null if it hasn't
-     * completed yet or the request resulted in success.
-     *
-     * @attribute error
-     * @type Object
-     * @default null
-     */
-    error: null,
-
-    /**
-     * Whether the current request is currently loading.
-     *
-     * @attribute loading
-     * @type boolean
-     * @default false
-     */
-    loading: false,
-
-    /**
-     * The progress of the current request.
-     *
-     * @attribute progress
-     * @type {loaded: number, total: number, lengthComputable: boolean}
-     * @default {}
-     */
-    progress: null,
-
-    /**
-     * The HTTP method to use such as 'GET', 'POST', 'PUT', or 'DELETE'.
-     * Default is 'GET'.
-     *
-     * @attribute method
-     * @type string
-     * @default ''
-     */
-    method: '',
-
-    /**
-     * HTTP request headers to send.
-     *
-     * Example:
-     *
-     *     <core-ajax
-     *         auto
-     *         url="http://somesite.com"
-     *         headers='{"X-Requested-With": "XMLHttpRequest"}'
-     *         handleAs="json"
-     *         on-core-response="{{handleResponse}}"></core-ajax>
-     *
-     * @attribute headers
-     * @type Object
-     * @default null
-     */
-    headers: null,
-
-    /**
-     * Optional raw body content to send when method === "POST".
-     *
-     * Example:
-     *
-     *     <core-ajax method="POST" auto url="http://somesite.com"
-     *         body='{"foo":1, "bar":2}'>
-     *     </core-ajax>
-     *
-     * @attribute body
-     * @type Object
-     * @default null
-     */
-    body: null,
-
-    /**
-     * Content type to use when sending data.
-     *
-     * @attribute contentType
-     * @type string
-     * @default 'application/x-www-form-urlencoded'
-     */
-    contentType: 'application/x-www-form-urlencoded',
-
-    /**
-     * Set the withCredentials flag on the request.
-     *
-     * @attribute withCredentials
-     * @type boolean
-     * @default false
-     */
-    withCredentials: false,
-
-    /**
-     * Additional properties to send to core-xhr.
-     *
-     * Can be set to an object containing default properties
-     * to send as arguments to the `core-xhr.request()` method
-     * which implements the low-level communication.
-     *
-     * @property xhrArgs
-     * @type Object
-     * @default null
-     */
-    xhrArgs: null,
-
-    created: function() {
-      this.progress = {};
-    },
-
-    ready: function() {
-      this.xhr = document.createElement('core-xhr');
-    },
-
-    receive: function(response, xhr) {
-      if (this.isSuccess(xhr)) {
-        this.processResponse(xhr);
-      } else {
-        this.processError(xhr);
-      }
-      this.complete(xhr);
-    },
-
-    isSuccess: function(xhr) {
-      var status = xhr.status || 0;
-      return (status >= 200 && status < 300);
-    },
-
-    processResponse: function(xhr) {
-      var response = this.evalResponse(xhr);
-      if (xhr === this.activeRequest) {
-        this.response = response;
-      }
-      this.fire('core-response', {response: response, xhr: xhr});
-    },
-
-    processError: function(xhr) {
-      var response = this.evalResponse(xhr);
-      var error = {
-        statusCode: xhr.status,
-        response: response
-      };
-      if (xhr === this.activeRequest) {
-        this.error = error;
-      }
-      this.fire('core-error', {response: error, xhr: xhr});
-    },
-
-    processProgress: function(progress, xhr) {
-      if (xhr !== this.activeRequest) {
-        return;
-      }
-      // We create a proxy object here because these fields
-      // on the progress event are readonly properties, which
-      // causes problems in common use cases (e.g. binding to
-      // <paper-progress> attributes).
-      var progressProxy = {
-        lengthComputable: progress.lengthComputable,
-        loaded: progress.loaded,
-        total: progress.total
-      }
-      this.progress = progressProxy;
-    },
-
-    complete: function(xhr) {
-      if (xhr === this.activeRequest) {
-        this.loading = false;
-      }
-      this.fire('core-complete', {response: xhr.status, xhr: xhr});
-    },
-
-    evalResponse: function(xhr) {
-      return this[(this.handleAs || 'text') + 'Handler'](xhr);
-    },
-
-    xmlHandler: function(xhr) {
-      return xhr.responseXML;
-    },
-
-    textHandler: function(xhr) {
-      return xhr.responseText;
-    },
-
-    jsonHandler: function(xhr) {
-      var r = xhr.responseText;
-      try {
-        return JSON.parse(r);
-      } catch (x) {
-        console.warn('core-ajax caught an exception trying to parse response as JSON:');
-        console.warn('url:', this.url);
-        console.warn(x);
-        return r;
-      }
-    },
-
-    documentHandler: function(xhr) {
-      return xhr.response;
-    },
-
-    blobHandler: function(xhr) {
-      return xhr.response;
-    },
-
-    arraybufferHandler: function(xhr) {
-      return xhr.response;
-    },
-
-    urlChanged: function() {
-      if (!this.handleAs) {
-        var ext = String(this.url).split('.').pop();
-        switch (ext) {
-          case 'json':
-            this.handleAs = 'json';
-            break;
-        }
-      }
-      this.autoGo();
-    },
-
-    paramsChanged: function() {
-      this.autoGo();
-    },
-
-    bodyChanged: function() {
-      this.autoGo();
-    },
-
-    autoChanged: function() {
-      this.autoGo();
-    },
-
-    // TODO(sorvell): multiple side-effects could call autoGo
-    // during one micro-task, use a job to have only one action
-    // occur
-    autoGo: function() {
-      if (this.auto) {
-        this.goJob = this.job(this.goJob, this.go, 0);
-      }
-    },
-
-    getParams: function(params) {
-      params = this.params || params;
-      if (params && typeof(params) == 'string') {
-        params = JSON.parse(params);
-      }
-      return params;
-    },
-
-    /**
-     * Performs an Ajax request to the specified URL.
-     *
-     * @method go
-     */
-    go: function() {
-      var args = this.xhrArgs || {};
-      // TODO(sjmiles): we may want XHR to default to POST if body is set
-      args.body = this.body || args.body;
-      args.params = this.getParams(args.params);
-      args.headers = this.headers || args.headers || {};
-      if (args.headers && typeof(args.headers) == 'string') {
-        args.headers = JSON.parse(args.headers);
-      }
-      var hasContentType = Object.keys(args.headers).some(function (header) {
-        return header.toLowerCase() === 'content-type';
-      });
-      // No Content-Type should be specified if sending `FormData`.  
-      // The UA must set the Content-Type w/ a calculated  multipart boundary ID.
-      if (args.body instanceof FormData) {
-        delete args.headers['Content-Type'];
-      } 
-      else if (!hasContentType && this.contentType) {
-        args.headers['Content-Type'] = this.contentType;
-      }
-      if (this.handleAs === 'arraybuffer' || this.handleAs === 'blob' ||
-          this.handleAs === 'document') {
-        args.responseType = this.handleAs;
-      }
-      args.withCredentials = this.withCredentials;
-      args.callback = this.receive.bind(this);
-      args.url = this.url;
-      args.method = this.method;
-
-      this.response = this.error = this.progress = null;
-      this.activeRequest = args.url && this.xhr.request(args);
-      if (this.activeRequest) {
-        this.loading = true;
-        var activeRequest = this.activeRequest;
-        // IE < 10 doesn't support progress events.
-        if ('onprogress' in activeRequest) {
-          this.activeRequest.addEventListener(
-              'progress',
-              function(progress) {
-                this.processProgress(progress, activeRequest);
-              }.bind(this), false);
-        } else {
-          this.progress = {
-            lengthComputable: false,
-          }
-        }
-      }
-      return this.activeRequest;
-    },
-
-    /**
-     * Aborts the current active request if there is one and resets internal
-     * state appropriately.
-     *
-     * @method abort
-     */
-    abort: function() {
-      if (!this.activeRequest) return;
-      this.activeRequest.abort();
-      this.activeRequest = null;
-      this.progress = {};
-      this.loading = false;
-    }
-
-  });
-
-</script>
-</polymer-element>
-<polymer-element name="dd-app" assetpath="elements/dd-app/">
+<polymer-element name="fs-app" assetpath="elements/fs-app/">
   <template>
     <style>
       :host {
@@ -4868,10 +4868,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .grade {
-        float: left;
         padding: 6px 16px 43px;
         color: white;
-        font-weight: bold;
         text-align: center;
         height: 100%;
         margin: 0;
@@ -4887,7 +4885,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .core-header {
-        height: 60px;
         line-height: 60px;
         font-size: 18px;
         padding: 0 10px;
@@ -4900,6 +4897,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 0 10px;
       }
 
+      /*
+        Note: Progress
+        Our paper-progress element starts hidden.
+      */
       paper-progress {
         width: 100%;
         visibility: hidden;
@@ -4917,58 +4918,113 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       h4, .info > div { margin: 0 0 10px; }
     </style>
 
-    <core-media-query query="max-width: 640px" querymatches="{{phoneScreen}}">
-    </core-media-query>
-
     <core-header-panel id="core_header_panel">
       <!--
-        Upon experimentation, "indeterminate" tested better than an
-        actual progress based -->
+        Note: Progress
+
+        The paper-progress element with an "indeterminate" attribute
+        tested better than an min/value/max based implementation.
+
+        If we wanted to switch it back, it would be the following:
+
+        <paper-progress id="progress"
+          bottom fit
+          min="0"
+          value={{progress.loaded}}
+          max="{{progress.lengthComputable}}">
+        </paper-progress>
+      -->
       <paper-progress id="progress" bottom="" fit="" indeterminate=""></paper-progress>
 
-      <!--<paper-progress id="progress"-->
-      <!--  bottom fit-->
-      <!--  min="0"-->
-      <!--  value={{progress.loaded}}-->
-      <!--  max="{{progress.lengthComputable}}">-->
-      <!--</paper-progress>-->
       <div class="core-header">
         Boston :: Food Sherpa
+        <paper-button on-click="{{showRubric}}" style="float: right;">View Rubric</paper-button>
       </div>
 
       <div class="content">
+        <!--
+          Step 1:
+
+          The {{searchTerm}} variable will update upon typing into the
+          paper-input, which will trigger the searchTermChanged watcher
+          below.
+        -->
         <paper-input floatinglabel="" label="Search by restaurant name" value="{{searchTerm}}" id="byName">
         </paper-input>
 
+        <!--
+          Step 4:
+
+          When the results is populated below, the repeat attribute
+          of this <template> tag loops through each result and renders
+          its embedded HTML.
+
+          The code below relies heavily on Polymer's layout attribute system
+          which is documented here:
+          https://www.polymer-project.org/docs/polymer/layout-attrs.html and
+          borrows from how Android's layout system works.
+        -->
         <template repeat="{{ result in results }}">
           <paper-shadow id="restaurant-{{result.ID}}" layout="" horizontal="">
+            <!--
+              Note: CSS
+
+              This bit here is fun. It dumps the letter grade in the class
+              attribute and then uses vertical flex to render the grade bar on the
+              side of each restaurant card.
+            -->
             <div layout="" vertical="">
               <h1 class="grade {{result.Grade}}">{{ result.Grade }}</h1>
               <div class="background-fill" flex=""></div>
             </div>
-            <div class="info" layout="" horizontal="{{!phoneScreen}}" vertical="{{phoneScreen}}">
-
+            <div class="info" layout="" vertical="">
               <div class="address">
                 <h4>{{ result.BusinessName }}</h4>
                 <small>
-                {{ result.Address }}<br>
-                {{ result.City }}, {{ result.State }} {{ result.ZIP }}
+                  {{ result.Address }}<br>
+                  {{ result.City }}, {{ result.State }} {{ result.ZIP }}
                 </small>
               </div>
 
-              <div class="actions" right?="{{!phoneScreen}}">
-                <div layout="" horizontal="">
-                  <paper-button id="violations-{{result.ID}}" on-click="{{showViolations}}">
-                    View Violations
-                  </paper-button>
-                </div>
-              </div>
+              <!--
+                Step 5a:
+
+                When this button is tapped, the showViolations function
+                is called, which starts the process of showing the violations
+                dialog.
+              -->
+              <paper-button id="violations-{{result.ID}}" on-click="{{showViolations}}">
+                View Violations
+              </paper-button>
             </div>
           </paper-shadow>
 
+          <!--
+            Step 5c:
 
+            When dialog.toggle is called in the showViolations function below,
+            this dialog appears with a darkroom-style overlay (backdrop
+            attribute) and opens from the center (core-transition-center).
+
+            For now it contains a very simple table of all the violations from
+            each restaurant in the results, since 2010.
+
+            One important thing here is that the content of things like
+            paper-action-dialog, paper-dialog, core-overlay are all rendered
+            by putting this content a body tag level core-overlay-layer
+            element. Thus, the content here is pre-rendered in a hidden state,
+            and shown inside the core-overlay-layer element when needed.
+          -->
           <paper-action-dialog id="violation_dialog_{{ result.ID }}" backdrop="" class="scrolling" transition="core-transition-center">
 
+            <div>
+              Legend:
+              <ul>
+                <li><strong>***</strong> - Foodborne Illness Risk Factor Critical Violation</li>
+                <li><strong>**</strong> - Critical Violation</li>
+                <li><strong>*</strong> - Non-Critical Violation</li>
+              </ul>
+            </div>
             <table cellpadding="2">
               <tbody><tr>
                 <th>Date</th>
@@ -4987,18 +5043,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-action-dialog>
         </template>
 
-        <core-ajax id="dd_api" handleas="json" progress="{{progress}}" on-core-response="{{handleResponse}}">
+        <!--
+          Step 2b:
+          The core-ajax element responds to the go() call in the
+          searchTermChanged watcher, and then when on-core-response fires,
+          handleReponse is called.
+
+          This element is different because it doesn't display anything, but
+          is instead a wrapper for the JS necessary to do the AJAX calls.
+          this.$.fs_api.* below exposes these functions.
+
+          Note: Progress
+          If we wanted to implement the min/value/max attribute version
+          of paper-progress mentioned above, we would include a
+          progress={{progress}} attribute here.
+        -->
+        <core-ajax id="fs_api" handleas="json" on-core-response="{{handleResponse}}">
         </core-ajax>
       </div>
+
+      <paper-action-dialog id="rubric" backdrop="">
+        <p>Dating back to March 3, 2010:</p>
+        <p>∙ Restaurants with greater than 8 level *** violations (85th percentile) received a grade	of an ‘F.’</p>
+        <p>∙ Restaurants with between 6 and 8 level *** violations (75th percentile) or greater than 3 level ** violations (85th percentile) received a grade of a ‘D.’</p>
+        <p>∙ Restaurants with between 4 and 5 level *** violations (65th percentile) or 2 level ** violations (75th percentile) or greater than 41 level * violations (85th percentile) received a grade of a ‘C.’</p>
+        <p>∙ Restaurants with between 2 and 3 level *** violations (45th percentile) or 1 level violations (55th percentile) or greater than 22 level * violations (65th percentile) received a grade of a ‘B.’</p>
+        <p>∙ Restaurants with less than 2 level *** violations (45th percentile) and less than 1 level	** violations (55th percentile) and less than 23 level * violations (65th percentile)	received a grade of an ‘A.’</p>
+        <paper-button affirmative="" autofocus="">Close</paper-button>
+      </paper-action-dialog>
     </core-header-panel>
   </template>
 
   <script>
-    Polymer('dd-app',{
-      results: {},
+    Polymer('fs-app',{
+      /*
+        This is defined here to prevent the searchTermChanged watcher
+        being called prematurely upon page load, when searchTerm changes from
+        null to "". You can leave it out and just use it in the attributes
+        above as {{searchTerm}}
+      */
       searchTerm: "",
-      searchTimeout: null,
 
+      /*
+        Step 2a:
+
+        The searchTermChanged is automatically called whenever the
+        searchTerm property changes. This function changes the url parameter
+        of the core-ajax element, and then calls go(), which fires the
+        ajax request.
+
+        It also uses a timeout based "intent" pattern, which waits 500 ms
+        after the user is done typing to fire the ajax request. The timeout
+        function has a different scope than the function, hence the
+        that = this context gymnastics.
+      */
       searchTermChanged: function(oldValue, newValue) {
         var that = this;
 
@@ -5007,27 +5105,54 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         function delayedAjaxCall() {
           if(newValue) {
-            var searchUrl;
-            searchUrl = "http://104.236.242.57/api/v1.0/restaurants/name/";
-            searchUrl += newValue;
+            var searchUrl
+              = "http://104.236.242.57/api/v1.0/restaurants/name/" + newValue;
 
+            // Note: Progress
+            // The paper-progress element is displayed immediately before
+            // the ajax call is fired.
+            that.$.fs_api.url = searchUrl;
             that.$.progress.style.visibility = "visible";
-            that.$.dd_api.url = searchUrl;
-            that.$.dd_api.go();
+            that.$.fs_api.go();
           }
         };
       },
+
+      /*
+        Step 5b:
+
+        Here, since the paper-dialog element is nested within a <template>
+        tag, we need to use this.shadowRoot.querySelector instead of
+        regular old querySelector or the polymer-specific this.$
+
+        Kind of a bummer, but still gets the job done.
+      */
       showViolations: function(event,response,context) {
         var restuarantID = context.id.split("-")[1];
         var dialog = this.shadowRoot.querySelector("#violation_dialog_" + restuarantID);
         dialog.toggle();
       },
+
+      /*
+        Step 3:
+
+        handleResponse and uses the https://lodash.com library to filter
+        the API response in two nested _.chain calls to summarily display the
+        data in the two nested <template> tags above.
+
+        The specifics of each step of the chain are described inline.
+      */
       handleResponse: function(event, response, context) {
         var filteredResults = response.response;
 
+        // Take all the server results...
         this.results = _.chain(filteredResults)
+          // Only show active restaurants ...
           .filter({ "LICSTATUS": "Active"})
+          // ...change the APis violations object to an array ...
           .map(function(d) {
+            // We reverse sort by ID here because the data doesn't have dates
+            // in an easily sortable format.
             d.violArray = _.chain(d.violations)
               .values()
               .sortBy("ID")
@@ -5036,15 +5161,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             return d;
           })
+          // ...sort by the Grade field ...
           .sortBy("Grade")
+          // ...return the values instead of another lodash chain.
           .value();
 
+        // Note: Progress
+        // The paper-progress element is hidden after this call is done.
         this.$.progress.style.visibility = "hidden";
+      },
+      showRubric: function(e,f,b) {
+        this.$.rubric.toggle();
       }
     });
   </script>
 </polymer-element></div>
-    <dd-app></dd-app>
+    <fs-app></fs-app>
     <script src="bower_components/lodash/lodash.min.js"></script>
     <script src="js/app.js"></script>
 
