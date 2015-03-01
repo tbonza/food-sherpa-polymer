@@ -32,6 +32,7 @@
 <link rel="import" href="../../bower_components/core-header-panel/core-header-panel.html">
 <link rel="import" href="../../bower_components/core-media-query/core-media-query.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 
@@ -125,11 +126,13 @@
       <paper-progress id="progress" bottom fit indeterminate></paper-progress>
 
       <div class="core-header">
-        Boston :: Food Sherpa
-        <paper-button on-click="{{showRubric}}" style="float: right;">View Rubric</paper-button>
+        Food Sherpa
       </div>
 
       <div class="content">
+        <h3>
+          Grades for Boston Restaurants based on Food Inspection Data
+        </h3>
         <!--
           Step 1:
 
@@ -186,6 +189,8 @@
                 dialog.
               -->
               <paper-button id="violations-{{result.ID}}"
+                raised
+                class="colored"
                 on-click="{{showViolations}}">
                 View Violations
               </paper-button>
@@ -235,7 +240,10 @@
                 </tr>
               </template>
             </table>
-            <paper-button affirmative autofocus>Close</paper-button>
+            <paper-button
+            raised affirmative
+            class="colored"
+            autofocus>Close</paper-button>
           </paper-action-dialog>
         </template>
 
@@ -258,6 +266,11 @@
           handleAs="json"
           on-core-response="{{handleResponse}}">
         </core-ajax>
+
+        <paper-button
+        raised
+        class="colored"
+        on-click="{{showRubric}}" style="float: right;">View Rubric</paper-button>
       </div>
 
       <paper-action-dialog id="rubric" backdrop>
@@ -267,7 +280,11 @@
         <p>- Restaurants with between 4 and 5 level *** violations (65th percentile) or 2 level ** violations (75th percentile) or greater than 41 level * violations (85th percentile) received a grade of a C.</p>
         <p>- Restaurants with between 2 and 3 level *** violations (45th percentile) or 1 level violations (55th percentile) or greater than 22 level * violations (65th percentile) received a grade of a B.</p>
         <p>- Restaurants with less than 2 level *** violations (45th percentile) and less than 1 level	** violations (55th percentile) and less than 23 level * violations (65th percentile)	received a grade of an A.</p>
-        <paper-button affirmative autofocus>Close</paper-button>
+        <paper-button
+          raised
+          class="colored"
+          affirmative
+          autofocus>Close</paper-button>
       </paper-action-dialog>
     </core-header-panel>
   </template>
