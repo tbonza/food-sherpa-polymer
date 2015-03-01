@@ -1,5 +1,5 @@
-# food-sherpa-polymer
-Dirty Dishes app for "Big Data for Social Good" Hackathon. Polymer annotated code.
+# Food Sherpa
+Created for "Big Data for Social Good" Hackathon.
 
 No edits should be made to index.html directly. That file should be generated using the vulcanize tool:
 
